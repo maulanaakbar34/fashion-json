@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const db = require('./database.js'); // modul db untuk menghubungkan ke database neon nya
+const db = require('./database.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -18,7 +18,7 @@ app.get('/status', (req, res) => {
 });
 
 
-// Menggunakan Auth ini opsional, hanya menyesuaikan materi sebelumnya
+
 app.post('/auth/register', async (req, res, next) => {
     const { username, password } = req.body;
     if (!username || !password || password.length < 6) {
