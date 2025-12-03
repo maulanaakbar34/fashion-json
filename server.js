@@ -79,8 +79,8 @@ app.post('/auth/login', async (req, res, next) => {
 });
 
 // Masuk ke endpoint GET, POST, PUT, DELETE
-app.get('/products', async (req, res, next) => {
-    const sql = `SELECT sku, "productName", price, "isAvailable" FROM products ORDER BY sku ASC`;
+app.get('/fashion', async (req, res, next) => {
+    const sql = `SELECT sku, "productName", price, "isAvailable" FROM fashion ORDER BY sku ASC`;
     try {
         const result = await db.query(sql);
         // Mengembalikan data sesuai format Vendor B
@@ -91,8 +91,8 @@ app.get('/products', async (req, res, next) => {
 });
 
 // GET u produk by sku
-app.get('/products/:sku', async (req, res, next) => {
-    const sql = `SELECT sku, "productName", price, "isAvailable" FROM products WHERE sku = $1`;
+app.get('/fashion/:sku', async (req, res, next) => {
+    const sql = `SELECT sku, "productName", price, "isAvailable" FROM fashion WHERE sku = $1`;
     try {
         const result = await db.query(sql, [req.params.sku]);
         if (result.rows.length === 0) {
@@ -105,7 +105,7 @@ app.get('/products/:sku', async (req, res, next) => {
 });
 
 // POST u menambahkan produk
-app.post('/products', authenticateToken, async (req, res, next) => {
+app.post('/fashion', authenticateToken, async (req, res, next) => {
     // Memastikan input sesuai dengan CamelCase dan tipe data yang benar
     const { sku, productName, price, isAvailable } = req.body; 
     
@@ -119,7 +119,7 @@ app.post('/products', authenticateToken, async (req, res, next) => {
         return res.status(400).json({ error: 'price harus berupa angka/integer' });
     }
     
-    const sql = `INSERT INTO products (sku, "productName", price, "isAvailable") VALUES ($1, $2, $3, $4) RETURNING *`;
+    const sql = `INSERT INTO fashion (sku, "productName", price, "isAvailable") VALUES ($1, $2, $3, $4) RETURNING *`;
     try {
         const result = await db.query(sql, [sku, productName, parsedPrice, isAvailable]);
         res.status(201).json(result.rows[0]);
@@ -132,7 +132,7 @@ app.post('/products', authenticateToken, async (req, res, next) => {
 });
 
 // PUT u update data
-app.put('/products/:sku', [authenticateToken, authorizeRole('admin')], async (req, res, next) => {
+app.put('/fashion/:sku', [authenticateToken, authorizeRole('admin')], async (req, res, next) => {
     const { productName, price, isAvailable } = req.body;
     
     if (!productName && !price && isAvailable === undefined) {
@@ -169,7 +169,7 @@ app.put('/products/:sku', [authenticateToken, authorizeRole('admin')], async (re
     
     values.push(sku); // SKU adalah parameter terakhir untuk WHERE
     
-    const sql = `UPDATE products SET ${fields.join(', ')} WHERE sku = $${queryIndex} RETURNING *`;
+    const sql = `UPDATE fashion SET ${fields.join(', ')} WHERE sku = $${queryIndex} RETURNING *`;
 
     try {
         const result = await db.query(sql, values);
@@ -183,8 +183,8 @@ app.put('/products/:sku', [authenticateToken, authorizeRole('admin')], async (re
 });
 
 // DELETE u hapuss data
-app.delete('/products/:sku', [authenticateToken, authorizeRole('admin')], async (req, res, next) => {
-    const sql = 'DELETE FROM products WHERE sku = $1 RETURNING *';
+app.delete('/fashion/:sku', [authenticateToken, authorizeRole('admin')], async (req, res, next) => {
+    const sql = 'DELETE FROM fashion WHERE sku = $1 RETURNING *';
     try {
         const result = await db.query(sql, [req.params.sku]);
         if (result.rowCount === 0) {
