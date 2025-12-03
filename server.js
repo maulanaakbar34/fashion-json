@@ -107,12 +107,15 @@ app.post("/auth/login", async (req, res, next) => {
   }
 });
 
+/* ================================
+      FASHION CRUD ROUTES
+================================ */
 
 // GET ALL
 app.get("/fashion", async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT sku, productname, price, isavailable FROM fashion ORDER BY sku ASC`
+      `SELECT sku, "productName", price, "isAvailable" FROM fashion ORDER BY sku ASC`
     );
 
     res.json(result.rows);
@@ -127,7 +130,7 @@ app.get("/fashion/:sku", async (req, res) => {
 
   try {
     const result = await db.query(
-      `SELECT sku, productname, price, isavailable FROM fashion WHERE sku = $1`,
+      `SELECT sku, "productName", price, "isAvailable" FROM fashion WHERE sku = $1`,
       [sku]
     );
 
@@ -150,7 +153,7 @@ app.post("/fashion", authenticateToken, authorizeRole("admin"), async (req, res)
 
   try {
     const result = await db.query(
-      `INSERT INTO fashion (sku, productname, price, isavailable)
+      `INSERT INTO fashion (sku, "productName", price, "isAvailable")
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
       [sku, productName, price, isAvailable]
@@ -185,7 +188,7 @@ app.put("/fashion/:sku", authenticateToken, authorizeRole("admin"), async (req, 
 
     const result = await db.query(
       `UPDATE fashion
-       SET productname = $1, price = $2, isavailable = $3
+       SET "productName" = $1, price = $2, "isAvailable" = $3
        WHERE sku = $4
        RETURNING *`,
       [productName, price, isAvailable, sku]
